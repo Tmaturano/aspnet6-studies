@@ -18,17 +18,20 @@ app.UseHttpsRedirection();
 
 app.MapGet("/", () =>
 {
-return Results.Ok("Hello World");
+    return Results.Ok("Hello World");
 });
 
 app.MapGet("/name/{nome}", (string nome) =>
 {
-return Results.Ok($"Hello {nome}");
+    return Results.Ok($"Hello {nome}");
 });
 
 app.MapPost("/", (User user) =>
 {
-return Results.Ok(user);
+    if (user.Email is null)
+        user.Email = "test@test.com";
+
+    return Results.Ok(user);
 });
 
 app.Run();
@@ -37,4 +40,5 @@ public class User
 {
     public int Id { get; set; }
     public string Username { get; set; }
+    public string Email { get; set; }
 }
