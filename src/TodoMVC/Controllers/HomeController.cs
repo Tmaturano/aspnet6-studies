@@ -44,7 +44,6 @@ namespace TodoMVC.Controllers
             model.Title = todo.Title;
             model.Done = todo.Done;
 
-            _context.Todos.Update(todo);
             await _context.SaveChangesAsync();
             return NoContent();
         }
