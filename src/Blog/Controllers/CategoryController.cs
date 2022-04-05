@@ -1,5 +1,6 @@
 ﻿using Blog.Data;
 using Blog.Dtos;
+using Blog.Extensions;
 using Blog.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -16,21 +17,24 @@ namespace Blog.Controllers
         public CategoryController(BlogDataContext context) => _context = context;
 
         [HttpGet("v1/categories", Name = "GetCategories")]
-        public async Task<IActionResult> GetAsync() => Ok(await _context.Categories.AsNoTracking().ToListAsync());
+        public async Task<IActionResult> GetAsync() => Ok(new ResultDto<List<Category>>(await _context.Categories.AsNoTracking().ToListAsync()));
 
         [HttpGet("v1/categories/{id}", Name = "GetCategory")]
         public async Task<IActionResult> GetByIdAsync([FromRoute] int id)
         {
             var category = await _context.Categories.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
             if (category is null)
-                return NotFound();
+                return NotFound(new ResultDto<Category>("Content not found"));
 
-            return Ok(category);
+            return Ok(new ResultDto<Category>(category));
         }
 
         [HttpPost("v1/categories", Name = "CreateCategory")]
         public async Task<IActionResult> PostAsync([FromBody] CreateCategoryDto createCategoryDto)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(new ResultDto<Category>(ModelState.GetErrors()));
+
             try
             {
                 var category = new Category
@@ -43,7 +47,7 @@ namespace Blog.Controllers
                 await _context.Categories.AddAsync(category);
                 await _context.SaveChangesAsync();
 
-                return CreatedAtRoute("GetCategory", new { id = category.Id }, category);
+                return CreatedAtRoute("GetCategory", new { id = category.Id }, new ResultDto<Category>(category));
             }
             catch (DbUpdateException)
             {
@@ -60,7 +64,7 @@ namespace Blog.Controllers
         {
             var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
             if (category is null)
-                return NotFound();
+                return NotFound(new ResultDto<Category>("Content not found"));
 
             category.Name = categoryToUpdate.Name;
             category.Slug = categoryToUpdate.Slug;
@@ -76,12 +80,12 @@ namespace Blog.Controllers
         {
             var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
             if (category is null)
-                return NotFound();
+                return NotFound(new ResultDto<Category>("Content not found"));
 
             _context.Categories.Remove(category);
             await _context.SaveChangesAsync();
 
-            return Ok(category);
+            return NoContent();
         }
     }
 }
