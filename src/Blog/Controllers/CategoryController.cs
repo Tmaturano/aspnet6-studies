@@ -1,4 +1,5 @@
 ﻿using Blog.Data;
+using Blog.Dtos;
 using Blog.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -28,10 +29,17 @@ namespace Blog.Controllers
         }
 
         [HttpPost("v1/categories", Name = "CreateCategory")]
-        public async Task<IActionResult> PostAsync([FromBody] Category category)
+        public async Task<IActionResult> PostAsync([FromBody] CreateCategoryDto createCategoryDto)
         {
             try
             {
+                var category = new Category
+                {
+                    Id = 0,
+                    Name = createCategoryDto.Name,
+                    Slug = createCategoryDto.Slug.ToLower(),
+                };
+
                 await _context.Categories.AddAsync(category);
                 await _context.SaveChangesAsync();
 
@@ -48,7 +56,7 @@ namespace Blog.Controllers
         }
 
         [HttpPut("v1/categories/{id}", Name = "UpdateCategory")]
-        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] Category categoryToUpdate)
+        public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] UpdateCategoryDto categoryToUpdate)
         {
             var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
             if (category is null)
