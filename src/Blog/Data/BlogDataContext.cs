@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Blog.Data
 {
-    internal class BlogDataContext : DbContext
+    public class BlogDataContext : DbContext
     {
         public DbSet<Category> Categories { get; set; }
         public DbSet<Post> Posts { get; set; }
