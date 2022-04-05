@@ -12,7 +12,7 @@ namespace Blog.Controllers
 
         public CategoryController(BlogDataContext context) => _context = context;
 
-        [HttpGet("all", Name = "GetCategories")]
+        [HttpGet("v1/all", Name = "GetCategories")]
         public async Task<IActionResult> Get() => Ok(await _context.Categories.ToListAsync());
     }
 }
