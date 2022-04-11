@@ -18,4 +18,8 @@
     <PackageReference Include="SecureIdentity" Version="1.0.3" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Enums\" />
+  </ItemGroup>
+
 </Project>

@@ -42,6 +42,12 @@ namespace Blog.Controllers
             try
             {
                 await _context.Users.AddAsync(user);
+
+                //TODO: implement the add to the UserRole table
+                //var role = await _context.Roles.AsNoTracking().FirstOrDefaultAsync(x => x.Id == dto.Role);
+                //if (role is not null)                
+                //    await _context.UserRoles.AddAsync(new UserRole { RoleId = role.Id, UserId = user.Id });                
+
                 await _context.SaveChangesAsync();
 
                 return Ok(new ResultDto<dynamic>(new
@@ -61,11 +67,34 @@ namespace Blog.Controllers
         }
 
         [HttpPost("v1/auth/login")]
-        public IActionResult Login()
+        public async Task<IActionResult> Login([FromBody] LoginDto dto)
         {
-            var token = _tokenService.GenerateToken(null);
+            if (!ModelState.IsValid)
+                return BadRequest(new ResultDto<string>(ModelState.GetErrors()));
 
-            return Ok(token);
+            var user = await _context
+                            .Users
+                            .AsNoTracking()
+                            .Include(x => x.Roles)
+                            .FirstOrDefaultAsync(x => x.Email == dto.Email);
+
+            if (user is null)
+                return StatusCode(401, new ResultDto<string>("Invalid user or password"));
+
+            if (!PasswordHasher.Verify(user.PasswordHash, dto.Password))
+                return StatusCode(401, new ResultDto<string>("Invalid user or password"));
+
+            try
+            {
+
+                var token = _tokenService.GenerateToken(user);
+
+                return Ok(new ResultDto<string>(token, null));
+            }
+            catch
+            {
+                return StatusCode(500, new ResultDto<string>("05X04 - Internal Server Error"));
+            }
         }
 
 
