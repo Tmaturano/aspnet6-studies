@@ -25,15 +25,20 @@ namespace Blog.Data.Mappings
             builder.Property(x => x.Email)
                 .IsRequired()
                 .HasColumnType("VARCHAR")
-                .HasMaxLength(100);
+                .HasMaxLength(160);
 
-            builder.Property(x => x.Bio);
-            builder.Property(x => x.Image);
+            builder.Property(x => x.Bio)
+                .IsRequired(false);
+
+            builder.Property(x => x.Image)
+                .IsRequired(false);
+
             builder.Property(x => x.PasswordHash);
             
             builder.Property(x => x.Github)
                 .HasColumnType("VARCHAR")
-                .HasMaxLength(100);
+                .HasMaxLength(255)
+                .IsRequired(false);
 
             builder.Property(x => x.Slug)
                 .IsRequired()
