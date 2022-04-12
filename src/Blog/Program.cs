@@ -67,4 +67,5 @@ void ConfigureServices(WebApplicationBuilder builder)
 
     //Configuring DI
     builder.Services.AddTransient<ITokenService, TokenService>();
+    builder.Services.AddTransient<IEmailService, EmailService>();
 }
