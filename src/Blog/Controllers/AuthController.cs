@@ -15,11 +15,15 @@ namespace Blog.Controllers
     public class AuthController : ControllerBase
     {
         private readonly ITokenService _tokenService;
+        private readonly IEmailService _emailService;
         private readonly BlogDataContext _context;
 
-        public AuthController(ITokenService tokenService, BlogDataContext context)
+        public AuthController(ITokenService tokenService, 
+            IEmailService emailService,
+            BlogDataContext context)
         {
             _tokenService = tokenService;
+            _emailService = emailService;
             _context = context;
         }
 
@@ -49,11 +53,14 @@ namespace Blog.Controllers
                 //    await _context.UserRoles.AddAsync(new UserRole { RoleId = role.Id, UserId = user.Id });                
 
                 await _context.SaveChangesAsync();
+                await _emailService.SendAsync(user.Name, user.Email, "Welcome to the Blog!",
+                    $"Your Password is <strong>{password}</strong>", 
+                    "My Blog API", "blogApi@test.com");
+
 
                 return Ok(new ResultDto<dynamic>(new
                 {
-                    user = user.Email,
-                    password //send this password by email
+                    user = user.Email,                    
                 }));
             }
             catch (DbUpdateException)
