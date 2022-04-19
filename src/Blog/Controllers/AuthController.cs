@@ -1,5 +1,6 @@
 ﻿using Blog.Data;
 using Blog.Dtos;
+using Blog.Dtos.Auth;
 using Blog.Extensions;
 using Blog.Models;
 using Blog.Services.Interfaces;

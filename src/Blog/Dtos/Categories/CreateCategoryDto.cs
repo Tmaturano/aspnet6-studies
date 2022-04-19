@@ -1,4 +1,4 @@
-﻿namespace Blog.Dtos
+﻿namespace Blog.Dtos.Categories
 {
     public class CreateCategoryDto : CategoryDto
     {        

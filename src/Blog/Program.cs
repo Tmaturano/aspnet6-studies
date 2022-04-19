@@ -17,8 +17,8 @@ LoadConfiguration(app);
 
 app.UseAuthentication();
 app.UseAuthorization();
+app.UseStaticFiles(); //every static file (image, css, js, html, etc will be placed in wwwroot directory)
 app.MapControllers();
-
 app.Run();
 
 
