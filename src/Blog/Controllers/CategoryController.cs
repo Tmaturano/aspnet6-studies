@@ -5,6 +5,7 @@ using Blog.Extensions;
 using Blog.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace Blog.Controllers
 {
@@ -14,11 +15,27 @@ namespace Blog.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly BlogDataContext _context;
+        private readonly IMemoryCache _memoryCache;
 
-        public CategoryController(BlogDataContext context) => _context = context;
+        public CategoryController(BlogDataContext context, IMemoryCache memoryCache)
+        {
+            _context = context;
+            _memoryCache = memoryCache;
+        }
 
         [HttpGet("v1/categories", Name = "GetCategories")]
-        public async Task<IActionResult> GetAsync() => Ok(new ResultDto<List<Category>>(await _context.Categories.AsNoTracking().ToListAsync()));
+        public async Task<IActionResult> GetAsync()
+        {
+            var categories = await _memoryCache.GetOrCreateAsync("CategoriesCache", async entry =>
+            {
+                entry.AbsoluteExpirationRelativeToNow = TimeSpan.FromHours(1);
+                return await GetCategories();
+            });
+
+            return Ok(new ResultDto<List<Category>>(categories));
+        }
+
+        private async Task<List<Category>> GetCategories() => await _context.Categories.AsNoTracking().ToListAsync();
 
         [HttpGet("v1/categories/{id}", Name = "GetCategory")]
         public async Task<IActionResult> GetByIdAsync([FromRoute] int id)
