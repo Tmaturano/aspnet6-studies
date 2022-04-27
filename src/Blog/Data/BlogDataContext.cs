@@ -14,7 +14,7 @@ namespace Blog.Data
         public DbSet<PostWithTagsCount> PostWithTagsCount { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder options) 
-            => options.UseSqlServer("Server=localhost,1433;Database=Blog;User ID=sa;Password=Abcd1234!");
+            => options.UseSqlServer("Server=localhost,1433;Database=blog-modulo-6;User ID=sa;Password=Abcd1234!");
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
