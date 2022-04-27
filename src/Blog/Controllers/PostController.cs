@@ -58,12 +58,11 @@ namespace Blog.Controllers
 
         [HttpGet("v1/posts/{id:int}")]
         public async Task<IActionResult> DetailsAsync(
-            [FromServices] BlogDataContext context,
             [FromRoute] int id)
         {
             try
             {
-                var post = await context
+                var post = await _context
                     .Posts
                     .AsNoTracking()
                     .Include(x => x.Author)
@@ -85,14 +84,13 @@ namespace Blog.Controllers
         [HttpGet("v1/posts/category/{category}")]
         public async Task<IActionResult> GetByCategoryAsync(
             [FromRoute] string category,
-            [FromServices] BlogDataContext context,
             [FromQuery] int page = 0,
             [FromQuery] int pageSize = 25)
         {
             try
             {
-                var count = await context.Posts.AsNoTracking().CountAsync();
-                var posts = await context
+                var count = await _context.Posts.Where(x => x.Category.Slug == category).AsNoTracking().CountAsync();
+                var posts = await _context
                     .Posts
                     .AsNoTracking()
                     .Include(x => x.Author)
@@ -111,6 +109,7 @@ namespace Blog.Controllers
                     .Take(pageSize)
                     .OrderByDescending(x => x.LastUpdateDate)
                     .ToListAsync();
+
                 return Ok(new ResultDto<dynamic>(new
                 {
                     total = count,
