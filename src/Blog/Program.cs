@@ -4,6 +4,7 @@ using Blog.Services;
 using Blog.Services.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.ResponseCompression;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IO.Compression;
 using System.Text;
@@ -18,11 +19,18 @@ ConfigureServices(builder);
 var app = builder.Build();
 LoadConfiguration(app);
 
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseResponseCompression();
 app.UseStaticFiles(); //every static file (image, css, js, html, etc will be placed in wwwroot directory)
 app.MapControllers();
+
+if (app.Environment.IsDevelopment())
+{
+    Console.WriteLine("I'm in Dev environment");
+}
+
 app.Run();
 
 
@@ -85,7 +93,8 @@ void ConfigureMvc(WebApplicationBuilder builder)
 
 void ConfigureServices(WebApplicationBuilder builder)
 {
-    builder.Services.AddDbContext<BlogDataContext>();
+    var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+    builder.Services.AddDbContext<BlogDataContext>(options => options.UseSqlServer(connectionString));
 
     //Configuring DI
     builder.Services.AddTransient<ITokenService, TokenService>();

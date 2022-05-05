@@ -13,9 +13,10 @@ namespace Blog.Data
         public DbSet<User> Users { get; set; }
         public DbSet<PostWithTagsCount> PostWithTagsCount { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder options) 
-            => options.UseSqlServer("Server=localhost,1433;Database=blog-modulo-6;User ID=sa;Password=Abcd1234!");
-
+        public BlogDataContext(DbContextOptions<BlogDataContext> options) : base(options)
+        {
+        }
+               
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.ApplyConfiguration(new CategoryMap());
