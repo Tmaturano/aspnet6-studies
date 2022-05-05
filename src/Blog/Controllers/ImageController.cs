@@ -19,7 +19,7 @@ namespace Blog.Controllers
         public ImageController(BlogDataContext context) => _context = context;
 
         [Authorize]
-        [Route("v1/images/upload")]
+        [HttpPost("v1/images/upload")]
         public async Task<IActionResult> UploadImage([FromBody] UploadImageDto uploadImageDto)
         {
             var fileName = $"{Guid.NewGuid().ToString()}.jpg";

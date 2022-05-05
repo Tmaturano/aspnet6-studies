@@ -16,6 +16,9 @@ ConfigureAuthentication(builder);
 ConfigureMvc(builder);
 ConfigureServices(builder);
 
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
 var app = builder.Build();
 LoadConfiguration(app);
 
@@ -28,7 +31,8 @@ app.MapControllers();
 
 if (app.Environment.IsDevelopment())
 {
-    Console.WriteLine("I'm in Dev environment");
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
 app.Run();
