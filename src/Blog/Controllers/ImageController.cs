@@ -79,9 +79,13 @@ namespace Blog.Controllers
                 var blobClient = new BlobClient(azureStorageConnectionString, containerName, fileName);
                                 
                 using var stream = new MemoryStream(imageBytes);
-                await blobClient.UploadAsync(stream);                              
+                await blobClient.UploadAsync(stream);
 
-                return StatusCode(200, new ResultDto<string>($"Image uploades successfully in {blobClient.Uri.AbsoluteUri}"));
+                return Ok(
+                    new
+                    {
+                        ImageUrl = blobClient.Uri.AbsoluteUri
+                    });
             }
             catch (Exception)
             {
