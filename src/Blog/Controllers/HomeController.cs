@@ -14,7 +14,8 @@ namespace Blog.Controllers
             var env = config.GetValue<string>("Env");
             return Ok(new
             {
-                environment = env
+                environment = env,
+                connectionString = config.GetConnectionString("DefaultConnection")
             });
         }
     }
