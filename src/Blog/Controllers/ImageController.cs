@@ -37,7 +37,8 @@ namespace Blog.Controllers
                 return StatusCode(500, new ResultDto<string>("05X04 - Internal Server Error"));
             }
 
-            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == User.Identity.Name);
+            var email = User.Identity?.Name;
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
 
             if (user is null)
                 return NotFound(new ResultDto<User>("User not found"));

@@ -52,7 +52,7 @@ namespace Blog.Controllers
             }
             catch
             {
-                return StatusCode(500, new ResultDto<List<Post>>("05X04 - Falha interna no servidor"));
+                return StatusCode(500, new ResultDto<List<Post>>("05X04 - Internal Server Error"));
             }
         }
 
@@ -71,13 +71,13 @@ namespace Blog.Controllers
                     .FirstOrDefaultAsync(x => x.Id == id);
 
                 if (post == null)
-                    return NotFound(new ResultDto<Post>("Conteúdo não encontrado"));
+                    return NotFound(new ResultDto<Post>("Content not found"));
 
                 return Ok(new ResultDto<Post>(post));
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                return StatusCode(500, new ResultDto<List<Post>>("05X04 - Falha interna no servidor"));
+                return StatusCode(500, new ResultDto<List<Post>>("05X04 - Internal Server Error"));
             }
         }
 
@@ -120,7 +120,7 @@ namespace Blog.Controllers
             }
             catch
             {
-                return StatusCode(500, new ResultDto<List<Post>>("05X04 - Falha interna no servidor"));
+                return StatusCode(500, new ResultDto<List<Post>>("05X04 - Internal Server Error"));
             }
         }
     }

@@ -40,11 +40,18 @@ namespace Blog.Controllers
         [HttpGet("v1/categories/{id}", Name = "GetCategory")]
         public async Task<IActionResult> GetByIdAsync([FromRoute] int id)
         {
-            var category = await _context.Categories.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
-            if (category is null)
-                return NotFound(new ResultDto<Category>("Content not found"));
+            try
+            {
+                var category = await _context.Categories.AsNoTracking().FirstOrDefaultAsync(c => c.Id == id);
+                if (category is null)
+                    return NotFound(new ResultDto<Category>("Content not found"));
 
-            return Ok(new ResultDto<Category>(category));
+                return Ok(new ResultDto<Category>(category));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new ResultDto<Category>("Internal Server Error"));
+            }
         }
 
         [HttpPost("v1/categories", Name = "CreateCategory")]
@@ -69,41 +76,63 @@ namespace Blog.Controllers
             }
             catch (DbUpdateException)
             {
-                return StatusCode(500, "05XE9 - Not possible to create the category");
+                return StatusCode(500, new ResultDto<Category>("05X9 - Not possible to create the category"));
             }
             catch (Exception)
             {
-                return StatusCode(500, "05XE10 - Internal Server Error");
+                return StatusCode(500, new ResultDto<Category>("05X10 - Internal Server Error"));
             }
         }
 
         [HttpPut("v1/categories/{id}", Name = "UpdateCategory")]
         public async Task<IActionResult> PutAsync([FromRoute] int id, [FromBody] UpdateCategoryDto categoryToUpdate)
         {
-            var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
-            if (category is null)
-                return NotFound(new ResultDto<Category>("Content not found"));
+            try
+            {
+                var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+                if (category is null)
+                    return NotFound(new ResultDto<Category>("Content not found"));
 
-            category.Name = categoryToUpdate.Name;
-            category.Slug = categoryToUpdate.Slug;
+                category.Name = categoryToUpdate.Name;
+                category.Slug = categoryToUpdate.Slug;
 
-            _context.Categories.Update(category);
-            await _context.SaveChangesAsync();
+                _context.Categories.Update(category);
+                await _context.SaveChangesAsync();
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (DbUpdateException)
+            {
+                return StatusCode(500, new ResultDto<Category>("05X8 - Not possible to create the category"));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new ResultDto<Category>("05X11 - Internal Server Error"));
+            }
         }
 
         [HttpDelete("v1/categories/{id}", Name = "DeleteCategory")]
         public async Task<IActionResult> DeleteAsync([FromRoute] int id)
         {
-            var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
-            if (category is null)
-                return NotFound(new ResultDto<Category>("Content not found"));
+            try
+            {
+                var category = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+                if (category is null)
+                    return NotFound(new ResultDto<Category>("Content not found"));
 
-            _context.Categories.Remove(category);
-            await _context.SaveChangesAsync();
+                _context.Categories.Remove(category);
+                await _context.SaveChangesAsync();
 
-            return NoContent();
+                return NoContent();
+            }
+            catch (DbUpdateException)
+            {
+                return StatusCode(500, new ResultDto<Category>("05X7 - Not possible to delete the category"));
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, new ResultDto<Category>("05X12 - Internal Server Error"));
+            }
         }
     }
 }
