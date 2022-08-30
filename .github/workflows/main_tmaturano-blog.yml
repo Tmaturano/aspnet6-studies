@@ -22,8 +22,15 @@ jobs:
           dotnet-version: "6.0.x"
           include-prerelease: true
 
+      - name: Install EF Tools
+        run: dotnet tool install --global dotnet-ef
+
       - name: Build with dotnet
         run: dotnet build --configuration Release
+        working-directory: src/Blog
+
+      - name: Update database (apply migrations)
+        run: dotnet ef database update
         working-directory: src/Blog
 
       - name: dotnet publish
